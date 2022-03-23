@@ -32,6 +32,6 @@
   "readme": "",
   "bugs": "",
   "changelog": "",
-  "system": [],
+  "system": ["forbidden-lands"],
   "library": false
 }
