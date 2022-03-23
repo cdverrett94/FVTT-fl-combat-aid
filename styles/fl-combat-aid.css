@@ -1,0 +1,102 @@
+.fl-combat-aid-application .action-tables > div {
+  margin-bottom: 10px;
+}
+
+.fl-combat-aid-application div.headers-container,
+.fl-combat-aid-application div.action {
+  display: grid;
+  grid-template-columns: 6fr 11fr 6fr 1fr;
+  grid-template-areas:
+    'action-name action-prerequisites action-skill action-expand'
+    'action-description action-description action-description action-description';
+  padding: 5px;
+}
+
+.fl-combat-aid-application div.action {
+  grid-template-rows: max-content max-content;
+  border-top: 1px solid black;
+  padding: 5px;
+  border-bottom: 0px;
+}
+
+.fl-combat-aid-application div.action-expand:hover {
+  cursor: pointer;
+  text-shadow: 0 0 5px #a00;
+}
+
+.fl-combat-aid-application div.action-name {
+  grid-area: action-name;
+}
+.fl-combat-aid-application div.action-prerequisites {
+  grid-area: action-prerequisites;
+}
+.fl-combat-aid-application div.action-skill {
+  grid-area: action-skill;
+}
+.fl-combat-aid-application div.action-expand {
+  grid-area: action-expand;
+  text-align: center;
+}
+.fl-combat-aid-application div.action-description {
+  grid-area: action-description;
+  padding: 2px 4px;
+}
+
+.fl-combat-aid-application div.headers-container {
+  border-top: 0px;
+}
+
+.fl-combat-aid-application div.headers-container,
+.fl-combat-aid-application div.action div.action-name span {
+  font-weight: bold;
+}
+
+.fl-combat-aid-application div.action span {
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+.fl-combat-aid-application .actions-table:not(.action-disabled) div.action span:hover {
+  background-color: #aaa;
+  cursor: pointer;
+}
+
+.fl-combat-aid-application .modify-actions {
+  opacity: 50%;
+}
+
+.fl-combat-aid-application .modify-actions:hover {
+  cursor: pointer;
+  opacity: 100%;
+}
+
+.fl-combat-aid-application .modify-actions.decrease-actions:hover {
+  color: red;
+}
+
+.fl-combat-aid-application .modify-actions.increase-actions:hover {
+  color: green;
+}
+
+.fl-combat-aid-application a.header-button.open-combat-aid:hover {
+  max-width: 200px;
+  color: #292929f0;
+}
+
+.fl-combat-aid-application a.header-button.open-combat-aid i {
+  margin-top: 4px;
+}
+
+.fl-combat-aid-application .fl-combat-aid-weapon-select {
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+.fl-combat-aid-application .border {
+  border: 6px solid transparent;
+  border-image: url(/modules/fl-combat-aid/assets/small-border.webp) 100/10px repeat;
+}
+
+.fl-combat-aid-application .window-header a.header-button.open-combat-aid i {
+  margin-top: 4px;
+}

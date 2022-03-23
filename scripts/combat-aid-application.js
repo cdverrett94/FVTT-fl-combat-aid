@@ -1,4 +1,4 @@
-import combatActions from '../module/combat-actions';
+import combatActions from './combat-actions';
 
 class CombatAid {
   static MODULE_ID = 'fl-combat-aid';
@@ -26,9 +26,7 @@ class CombatAidApplication extends Application {
 
   static showApplication(actor) {
     console.log(CombatAid.MODULE_ID);
-    let app = ui.windows.find?.(
-      (windowApp) => typeof windowApp === CombatAidApplication && windowApp.options.actorId === actor.id,
-    );
+    let app = ui.windows.find?.((windowApp) => typeof windowApp === CombatAidApplication && windowApp.options.actorId === actor.id);
     if (!app) app = new CombatAidApplication(actor);
     app.render(true, { focus: true, width: 700 });
   }
@@ -89,10 +87,8 @@ class CombatAidApplication extends Application {
           const typeMatch = item.data.type === attackInfo.info.type;
           let categoryMatch = true;
           let featureMatch = true;
-          if (attackInfo.info.requirement?.category)
-            categoryMatch = item.data.data.category === attackInfo.info.requirement.category;
-          if (attackInfo.info.requirement?.features)
-            featureMatch = attackInfo.info.requirement.features.find((feature) => item.data.data.features[feature]);
+          if (attackInfo.info.requirement?.category) categoryMatch = item.data.data.category === attackInfo.info.requirement.category;
+          if (attackInfo.info.requirement?.features) featureMatch = attackInfo.info.requirement.features.find((feature) => item.data.data.features[feature]);
           return typeMatch && categoryMatch && featureMatch;
         })
         .map((item) => ({ name: item.name, id: item.id }));
@@ -108,13 +104,9 @@ class CombatAidApplication extends Application {
         return true;
       }
       ui.notifications.error(
-        `You have no weapon that meets the requirements for the action. It must be a ${
-          attackInfo.info.requirement.category
-        } weapon${
-          attackInfo.info.requirement?.features
-            ? ` with one of the following properties: ${attackInfo.info.requirement.features.join(',')}`
-            : ''
-        }.`,
+        `You have no weapon that meets the requirements for the action. It must be a ${attackInfo.info.requirement.category} weapon${
+          attackInfo.info.requirement?.features ? ` with one of the following properties: ${attackInfo.info.requirement.features.join(',')}` : ''
+        }.`
       );
       return false;
     }
@@ -142,9 +134,7 @@ class CombatAidApplication extends Application {
 
   async rollAction(action) {
     if (action === 'parry') {
-      let weapons = this.actor.items.filter(
-        (item) => item.type === 'weapon' || (item.type === 'armor' && item.data.data.part === 'shield'),
-      );
+      let weapons = this.actor.items.filter((item) => item.type === 'weapon' || (item.type === 'armor' && item.data.data.part === 'shield'));
       weapons = weapons.map((weapon) => ({ id: weapon.id, name: weapon.name }));
 
       if (weapons.length) {
@@ -156,11 +146,7 @@ class CombatAidApplication extends Application {
       return false;
     }
     if (action === 'shove') {
-      let weapons = this.actor.items.filter(
-        (item) =>
-          (item.type === 'weapon' && item.data.data.features?.hook === true) ||
-          (item.type === 'armor' && item.data.data.part === 'shield'),
-      );
+      let weapons = this.actor.items.filter((item) => (item.type === 'weapon' && item.data.data.features?.hook === true) || (item.type === 'armor' && item.data.data.part === 'shield'));
       weapons = weapons.map((weapon) => ({ id: weapon.id, name: weapon.name }));
       weapons.unshift({ id: 'unarmed', name: 'Unarmed' });
 

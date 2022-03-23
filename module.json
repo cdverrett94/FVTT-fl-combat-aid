@@ -13,7 +13,7 @@
   "minimumCoreVersion": "9",
   "compatibleCoreVersion": "9",
   "scripts": [],
-  "esmodules": ["module/fl-combat-aid.js"],
+  "esmodules": ["scripts/fl-combat-aid.js"],
   "styles": ["styles/fl-combat-aid.css"],
   "packs": [],
   "dependencies": [],
