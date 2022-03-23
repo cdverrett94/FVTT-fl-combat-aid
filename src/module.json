@@ -1,0 +1,37 @@
+{
+  "name": "fl-combat-aid",
+  "title": "FVTT-fl-combat-aid",
+  "description": "",
+  "version": "This is auto replaced",
+  "author": "Kody Verrett",
+  "authors": [
+    {
+      "name": "Kody Verrett",
+      "discord": "shortyverrett94#4531"
+    }
+  ],
+  "minimumCoreVersion": "9",
+  "compatibleCoreVersion": "9",
+  "scripts": [],
+  "esmodules": ["module/fl-combat-aid.js"],
+  "styles": ["styles/fl-combat-aid.css"],
+  "packs": [],
+  "dependencies": [],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "socket": false,
+  "url": "This is auto replaced",
+  "manifest": "This is auto replaced",
+  "download": "This is auto replaced",
+  "license": "",
+  "readme": "",
+  "bugs": "",
+  "changelog": "",
+  "system": [],
+  "library": false
+}

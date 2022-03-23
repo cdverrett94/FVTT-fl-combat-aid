@@ -1,0 +1,70 @@
+<div class="fl-combat-aid-inner">
+    <h1>{{actor.name}} Combat Aid</h1>
+    <div class="action-tables">
+        <div class="slow-actions-table actions-table{{#unless actor.actions.slow}} action-disabled{{/unless}}">
+            <h2>Slow Actions <span class="modify-actions modify-slow-actions decrease-actions"><i class="fas fa-minus fa-xs"></i></span>
+                {{actor.actions.slow}} Left <span class="modify-actions modify-slow-actions increase-actions"><i
+                        class="fas fa-plus fa-xs"></i></span></h2>
+            <div class="outer-actions-container border">
+                <div class="headers-container">
+                    <div class="header action-name">
+                        Action
+                    </div>
+                    <div class="header action-prerequisites">
+                        Prerequisites
+                    </div>
+                    <div class="header action-skill">
+                        Skill
+                    </div>
+                    <div class="header action-expand" title="Collapse All"><i class="fas fa-angle-up"></i></div>
+                </div>
+                <div class="actions-container">
+                    {{#each actions.slow}}
+                    <div class="action">
+                        <div class="action-name">
+                            <span data-action-speed="slow" data-action-type="{{type}}" data-action-name="{{labels.name}}" data-action-roll="{{info.type}}">{{labels.name}}</span>
+                        </div>
+                        <div class="action-prerequisites">{{labels.prerequisite}}</div>
+                        <div class="action-skill">{{labels.skill}}</div>
+                        {{#if info.description}}<div class="action-expand"><i class="fas fa-angle-down"></i></div>{{/if}}
+                        <div class="action-description" style="display:none;">{{{info.description}}}</div>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+        </div>
+
+        <div class="fast-actions-table actions-table{{#unless actor.actions.fast}} action-disabled{{/unless}}">
+            <h2>Fast Actions <span class="modify-actions modify-fast-actions decrease-actions"><i class="fas fa-minus fa-xs"></i></span>
+                {{actor.actions.fast}} Left <span class="modify-actions modify-fast-actions increase-actions"><i
+                        class="fas fa-plus fa-xs"></i></span></h2>
+            <div class="outer-actions-container border">
+                <div class="headers-container">
+                    <div class="header action-name">
+                        Action
+                    </div>
+                    <div class="header action-prerequisites">
+                        Prerequisites
+                    </div>
+                    <div class="header action-skill">
+                        Skill
+                    </div>
+                    <div class="header action-expand" title="Collapse All"><i class="fas fa-angle-up"></i></div>
+                </div>
+                <div class="actions-container">
+                    {{#each actions.fast}}
+                    <div class="action">
+                        <div class="action-name">
+                            <span data-action-speed="fast" data-action-type="{{type}}" data-action-name="{{labels.name}}" data-action-roll="{{info.type}}">{{labels.name}}</span>
+                        </div>
+                        <div class="action-prerequisites">{{labels.prerequisite}}</div>
+                        <div class="action-skill">{{labels.skill}}</div>
+                        {{#if info.description}}<div class="action-expand"><i class="fas fa-angle-down"></i></div>{{/if}}
+                        <div class="action-description" style="display:none;">{{{info.description}}}</div>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

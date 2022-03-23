@@ -1,0 +1,109 @@
+.fl-combat-aid-application {
+  .action-tables > div {
+    margin-bottom: 10px;
+  }
+
+  div.headers-container,
+  div.action {
+    display: grid;
+    grid-template-columns: 6fr 11fr 6fr 1fr;
+    grid-template-areas:
+      'action-name action-prerequisites action-skill action-expand'
+      'action-description action-description action-description action-description';
+    padding: 5px;
+  }
+
+  div.action {
+    grid-template-rows: max-content max-content;
+    border-top: 1px solid black;
+    padding: 5px;
+    border-bottom: 0px;
+  }
+
+  div.action-expand:hover {
+    cursor: pointer;
+    text-shadow: 0 0 5px #a00;
+  }
+
+  div.action-name {
+    grid-area: action-name;
+  }
+  div.action-prerequisites {
+    grid-area: action-prerequisites;
+  }
+  div.action-skill {
+    grid-area: action-skill;
+  }
+  div.action-expand {
+    grid-area: action-expand;
+    text-align: center;
+  }
+  div.action-description {
+    grid-area: action-description;
+    padding: 2px 4px;
+  }
+
+  div.headers-container {
+    border-top: 0px;
+  }
+
+  div.headers-container,
+  div.action div.action-name span {
+    font-weight: bold;
+  }
+
+  div.action span {
+    padding: 2px 4px;
+    border-radius: 3px;
+  }
+
+  .actions-table:not(.action-disabled) div.action span:hover {
+    background-color: #aaa;
+    cursor: pointer;
+  }
+
+  .modify-actions {
+    opacity: 50%;
+    &:hover {
+      cursor: pointer;
+      opacity: 100%;
+    }
+
+    &.decrease-actions {
+      &:hover {
+        color: red;
+      }
+    }
+
+    &.increase-actions {
+      &:hover {
+        color: green;
+      }
+    }
+  }
+}
+
+a.header-button.open-combat-aid {
+  &:hover {
+    max-width: 200px;
+    color: #292929f0;
+  }
+
+  i {
+    margin-top: 4px;
+  }
+}
+
+.fl-combat-aid-weapon-select {
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+.border {
+  border: 6px solid transparent;
+  border-image: url(/modules/fl-combat-aid/assets/small-border.webp) 100/10px repeat;
+}
+
+.window-header a.header-button.open-combat-aid i {
+  margin-top: 4px;
+}
