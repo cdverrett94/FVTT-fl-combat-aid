@@ -17,13 +17,7 @@
   "styles": ["styles/fl-combat-aid.css"],
   "packs": [],
   "dependencies": [],
-  "languages": [
-    {
-      "lang": "en",
-      "name": "English",
-      "path": "lang/en.json"
-    }
-  ],
+  "languages": [],
   "socket": false,
   "url": "This is auto replaced",
   "manifest": "This is auto replaced",
