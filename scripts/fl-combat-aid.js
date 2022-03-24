@@ -21,10 +21,7 @@ Hooks.on('updateCombat', async (combat, changes) => {
     // reset action counts at start of new round and show sheet
     if (combat.current.round !== combat.previous.round && combat.current.round > combat.previous.round) {
       combat.combatants.forEach(async (combatant) => {
-        if (
-          combatant.players.find((player) => player.id === game.userId) !== undefined ||
-          (game.user.isGM && combatant.isOwner && !combatant.hasPlayerOwner)
-        ) {
+        if (combatant.players.find((player) => player.id === game.userId) !== undefined || (game.user.isGM && combatant.isOwner && !combatant.hasPlayerOwner)) {
           await combatant.actor.setFlag(CombatAid.MODULE_ID, 'fast-actions', CombatAid.defaults.fastActions);
           await combatant.actor.setFlag(CombatAid.MODULE_ID, 'slow-actions', CombatAid.defaults.slowActions);
           CombatAidApplication.showApplication(combatant.actor);
@@ -33,10 +30,7 @@ Hooks.on('updateCombat', async (combat, changes) => {
     }
 
     // show sheet if it is your actors turn
-    if (
-      combat.combatant.players.find((player) => player.id === game.userId) !== undefined ||
-      (combat.combatant.players.length === 0 && game.user.isGM)
-    ) {
+    if (combat.combatant.players.find((player) => player.id === game.userId) !== undefined || (combat.combatant.players.length === 0 && game.user.isGM)) {
       CombatAidApplication.showApplication(combat.combatant.actor);
     }
   }
