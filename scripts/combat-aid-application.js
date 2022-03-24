@@ -1,4 +1,4 @@
-import combatActions from './combat-actions';
+import combatActions from './combat-actions.js';
 
 class CombatAid {
   static MODULE_ID = 'fl-combat-aid';
