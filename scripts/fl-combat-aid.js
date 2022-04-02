@@ -1,4 +1,4 @@
-import { CombatAidApplication, CombatAid } from './combat-aid-application.js';
+import { CombatAidApplication } from './combat-aid-application.js';
 
 Hooks.on('updateCombat', async (combat, changes) => {
   // if its the beginning of combat show everyone their own combat aid application
@@ -10,8 +10,8 @@ Hooks.on('updateCombat', async (combat, changes) => {
 
     ownedCombatants.forEach(async (combatant) => {
       const { actor } = combatant;
-      await combatant.actor.setFlag(CombatAid.MODULE_ID, 'fast-actions', CombatAid.defaults.fastActions);
-      await combatant.actor.setFlag(CombatAid.MODULE_ID, 'slow-actions', CombatAid.defaults.slowActions);
+      await combatant.actor.setFlag(CombatAidApplication.MODULE_ID, 'fast-actions', CombatAidApplication.defaults.fastActions);
+      await combatant.actor.setFlag(CombatAidApplication.MODULE_ID, 'slow-actions', CombatAidApplication.defaults.slowActions);
       CombatAidApplication.showApplication(actor);
     });
   }
@@ -22,8 +22,8 @@ Hooks.on('updateCombat', async (combat, changes) => {
     if (combat.current.round !== combat.previous.round && combat.current.round > combat.previous.round) {
       combat.combatants.forEach(async (combatant) => {
         if (combatant.players.find((player) => player.id === game.userId) !== undefined || (game.user.isGM && combatant.isOwner && !combatant.hasPlayerOwner)) {
-          await combatant.actor.setFlag(CombatAid.MODULE_ID, 'fast-actions', CombatAid.defaults.fastActions);
-          await combatant.actor.setFlag(CombatAid.MODULE_ID, 'slow-actions', CombatAid.defaults.slowActions);
+          await combatant.actor.setFlag(CombatAidApplication.MODULE_ID, 'fast-actions', CombatAidApplication.defaults.fastActions);
+          await combatant.actor.setFlag(CombatAidApplication.MODULE_ID, 'slow-actions', CombatAidApplication.defaults.slowActions);
           CombatAidApplication.showApplication(combatant.actor);
         }
       });

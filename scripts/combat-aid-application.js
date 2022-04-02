@@ -1,6 +1,14 @@
 import combatActions from './combat-actions.js';
 
-class CombatAid {
+class CombatAidApplication extends Application {
+  constructor(actor) {
+    super({
+      id: `${CombatAidApplication.MODULE_ID}-${actor.id}`,
+      title: `${actor.name} Combat Aid`,
+      actor,
+    });
+  }
+
   static MODULE_ID = 'fl-combat-aid';
 
   static actions = combatActions;
@@ -10,22 +18,7 @@ class CombatAid {
     slowActions: 1,
   };
 
-  static templates = {
-    main: `modules/${this.MODULE_ID}/templates/combataid-application.hbs`,
-  };
-}
-
-class CombatAidApplication extends Application {
-  constructor(actor) {
-    super({
-      id: `${CombatAid.MODULE_ID}-${actor.id}`,
-      title: `${actor.name} Combat Aid`,
-      actor,
-    });
-  }
-
   static showApplication(actor) {
-    console.log(CombatAid.MODULE_ID);
     let app = ui.windows.find?.((windowApp) => typeof windowApp === CombatAidApplication && windowApp.options.actorId === actor.id);
     if (!app) app = new CombatAidApplication(actor);
     app.render(true, { focus: true, width: 700 });
@@ -37,18 +30,18 @@ class CombatAidApplication extends Application {
 
   getActionCounts() {
     return {
-      fast: Math.max(this.actor.getFlag(CombatAid.MODULE_ID, 'fast-actions') ?? CombatAid.defaults.fastActions, 0),
-      slow: Math.max(this.actor.getFlag(CombatAid.MODULE_ID, 'slow-actions') ?? CombatAid.defaults.slowActions, 0),
+      fast: Math.max(this.actor.getFlag(this.constructor.MODULE_ID, 'fast-actions') ?? this.defaults.fastActions, 0),
+      slow: Math.max(this.actor.getFlag(this.constructor.MODULE_ID, 'slow-actions') ?? this.defaults.slowActions, 0),
     };
   }
 
   async setActionCounts({ fast, slow } = {}) {
     if (fast !== undefined) {
-      await this.actor.setFlag(CombatAid.MODULE_ID, 'fast-actions', Math.max(fast, 0));
+      await this.actor.setFlag(this.constructor.MODULE_ID, 'fast-actions', Math.max(fast, 0));
       await game.combat?.getCombatantByActor(this.actor.id).setFlag('forbidden-lands', 'fast', fast === 0);
     }
     if (slow !== undefined) {
-      await this.actor.setFlag(CombatAid.MODULE_ID, 'slow-actions', Math.max(slow, 0));
+      await this.actor.setFlag(this.constructor.MODULE_ID, 'slow-actions', Math.max(slow, 0));
       await game.combat?.getCombatantByActor(this.actor.id).setFlag('forbidden-lands', 'slow', slow === 0);
     }
   }
@@ -58,8 +51,8 @@ class CombatAidApplication extends Application {
 
     const overrides = {
       height: 'auto',
-      classes: [`${CombatAid.MODULE_ID}-application`],
-      template: CombatAid.templates.main,
+      classes: [`${this.MODULE_ID}-application`],
+      template: `modules/${this.MODULE_ID}/templates/combataid-application.hbs`,
     };
 
     return foundry.utils.mergeObject(defaults, overrides);
@@ -67,7 +60,7 @@ class CombatAidApplication extends Application {
 
   getData() {
     return {
-      actions: CombatAid.actions,
+      actions: this.constructor.actions,
       actor: {
         name: this.actor.name,
         id: this.actor.id,
@@ -118,7 +111,7 @@ class CombatAidApplication extends Application {
       title: 'Choose Your Weapon',
       content: `
                         <h1>Weapon Select</h1>
-                        <select class="${CombatAid.MODULE_ID}-weapon-select" name="weapon">${promptOptions}</select>`,
+                        <select class="${this.constructor.MODULE_ID}-weapon-select" name="weapon">${promptOptions}</select>`,
       label: 'Roll Attack',
       callback: (html) => html.find('select').val(),
       rejectClose: false,
@@ -200,7 +193,7 @@ class CombatAidApplication extends Application {
         const actionSpeed = target.dataset.actionSpeed;
         const actionType = target.dataset.actionType;
         const actionRoll = target.dataset.actionRoll;
-        const actionInfo = CombatAid.actions[actionSpeed].find((action) => action.labels.name === actionName);
+        const actionInfo = this.constructor.actions[actionSpeed].find((action) => action.labels.name === actionName);
 
         let rolled;
         switch (actionType) {
@@ -265,14 +258,14 @@ class CombatAidApplication extends Application {
 
     html[0].querySelectorAll('.header.action-expand').forEach((element) => {
       element.addEventListener('click', (event) => {
+        console.log(event);
         let target = event.target.parentElement.parentElement;
         if (event.target.nodeName === 'I') target = target.parentElement; // go from i > div.action-expand > .headers-container > div.outer-actions-container
 
-        target.querySelectorAll('.action.action-description-expanded').forEach((element) => {
-          element.classList.remove('action-description-expanded');
-          element.querySelector('.action-description').style.display = 'none';
-          element.querySelector('.action-expand i').classList.remove('fa-angle-up');
-          element.querySelector('.action-expand i').classList.add('fa-angle-down');
+        target.querySelectorAll('.action-description:not(.action-hidden)').forEach((element) => {
+          element.classList.add('action-hidden');
+          element.previousSibling.previousSibling.querySelector('i').classList.remove('fa-angle-up');
+          element.previousSibling.previousSibling.querySelector('i').classList.add('fa-angle-down');
         });
       });
     });
@@ -284,12 +277,12 @@ class CombatAidApplication extends Application {
 
         let descriptionContainer = target.querySelector('.action-description');
         let classList = element.querySelector('.action-expand i').classList;
-        if (descriptionContainer.style.display === 'none') {
-          descriptionContainer.style.display = 'block';
+        if (descriptionContainer.classList.contains('action-hidden')) {
+          descriptionContainer.classList.remove('action-hidden');
           classList.remove('fa-angle-down');
           classList.add('fa-angle-up');
         } else {
-          descriptionContainer.style.display = 'none';
+          descriptionContainer.classList.add('action-hidden');
           classList.remove('fa-angle-up');
           classList.add('fa-angle-down');
         }
@@ -304,4 +297,4 @@ class CombatAidApplication extends Application {
   }
 }
 
-export { CombatAidApplication, CombatAid };
+export { CombatAidApplication };
