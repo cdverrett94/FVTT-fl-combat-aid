@@ -37,9 +37,19 @@
   grid-area: action-expand;
   text-align: center;
 }
+
 .fl-combat-aid-application div.action-description {
   grid-area: action-description;
   padding: 2px 4px;
+  max-height: 200px;
+  transition: max-height 0.5s linear;
+  overflow: hidden;
+}
+
+.fl-combat-aid-application div.action-description.action-hidden {
+  max-height: 0;
+  transition: max-height 0.45s linear;
+  overflow: hidden;
 }
 
 .fl-combat-aid-application div.headers-container {
