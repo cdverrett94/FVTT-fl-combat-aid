@@ -30,8 +30,8 @@ class CombatAidApplication extends Application {
 
   getActionCounts() {
     return {
-      fast: Math.max(this.actor.getFlag(this.constructor.MODULE_ID, 'fast-actions') ?? this.defaults.fastActions, 0),
-      slow: Math.max(this.actor.getFlag(this.constructor.MODULE_ID, 'slow-actions') ?? this.defaults.slowActions, 0),
+      fast: Math.max(this.actor.getFlag(this.constructor.MODULE_ID, 'fast-actions') ?? this.constructor.defaults.fastActions, 0),
+      slow: Math.max(this.actor.getFlag(this.constructor.MODULE_ID, 'slow-actions') ?? this.constructor.defaults.slowActions, 0),
     };
   }
 
