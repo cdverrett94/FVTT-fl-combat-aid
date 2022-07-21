@@ -1,31 +1,22 @@
 {
-  "name": "fl-combat-aid",
+  "id": "fl-combat-aid",
   "title": "FL Combat Aid",
   "description": "",
   "version": "0.3.0",
-  "author": "Kody Verrett",
   "authors": [
     {
       "name": "Kody Verrett",
       "discord": "shortyverrett94#4531"
     }
   ],
-  "minimumCoreVersion": "9",
-  "compatibleCoreVersion": "9",
-  "scripts": [],
   "esmodules": ["scripts/fl-combat-aid.js"],
   "styles": ["styles/fl-combat-aid.css"],
-  "packs": [],
-  "dependencies": [],
-  "languages": [],
-  "socket": false,
   "url": "This is auto replaced",
   "manifest": "This is auto replaced",
   "download": "This is auto replaced",
-  "license": "",
-  "readme": "",
-  "bugs": "",
-  "changelog": "",
   "system": ["forbidden-lands"],
-  "library": false
+  "compatibility" : {
+    "minimum": "10",
+    "verified": "10.274"
+  }
 }
