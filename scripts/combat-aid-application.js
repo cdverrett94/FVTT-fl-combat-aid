@@ -98,7 +98,7 @@ class CombatAidApplication extends Application {
       }
       ui.notifications.error(
         `You have no weapon that meets the requirements for the action. It must be a ${attackInfo.info.requirement.category} weapon${
-          attackInfo.info.requirement?.features ? ` with one of the following properties: ${attackInfo.info.requirement.features.join(',')}` : ''
+          attackInfo.info.requirement?.features ? ` with one of the following properties: ${attackInfo.info.requirement.features.join(', ')}` : ''
         }.`
       );
       return false;
