@@ -40,7 +40,7 @@ Hooks.on('getActorSheetHeaderButtons', (sheet, buttons) => {
   console.log('get header buttons');
   // add combat aid button to character sheet header
   buttons.unshift({
-    icon: 'fas fa-fist-raised',
+    icon: 'fas fa-swords',
     class: 'open-combat-aid',
     label: 'Combat Aid',
     onclick: () => {

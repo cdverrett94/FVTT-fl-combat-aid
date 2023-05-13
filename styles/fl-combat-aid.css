@@ -110,3 +110,8 @@
 .fl-combat-aid-application .window-header a.header-button.open-combat-aid i {
   margin-top: 4px;
 }
+
+.window-app .window-header a.header-button.open-combat-aid:hover {
+  max-width: 200px;
+  color: #292929f0;
+}
