@@ -116,7 +116,10 @@ export default {
         prerequisite: 'You are a Druid or Sorcerer',
         skill: 'None, see Chapter 6',
       },
-      type: 'other',
+      type: 'spell',
+      info: {
+        type: 'spell'
+      },
     },
     {
       labels: {
@@ -323,7 +326,10 @@ export default {
         prerequisite: 'You are a Druid or Sorcerer',
         skill: 'None, see Chapter 6',
       },
-      type: 'other',
+      type: 'spell',
+      info: {
+        type: 'power-word'
+      },
     },
     {
       labels: {

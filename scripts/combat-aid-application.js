@@ -1,11 +1,12 @@
 import combatActions from './combat-actions.js';
 
 class CombatAidApplication extends Application {
-  constructor(actor) {
+  constructor(actor,tokenId) {
     super({
       id: `${CombatAidApplication.MODULE_ID}-${actor.id}`,
       title: `${actor.name} Combat Aid`,
       actor,
+      tokenId
     });
   }
 
@@ -19,9 +20,19 @@ class CombatAidApplication extends Application {
   };
 
   static showApplication(actor) {
-    let app = ui.windows.find?.((windowApp) => typeof windowApp === CombatAidApplication && windowApp.options.actorId === actor.id);
-    if (!app) app = new CombatAidApplication(actor);
-    app.render(true, { focus: true, width: 700 });
+    let app;
+    for (const window in ui.windows) {
+      if (ui.windows[window].constructor.name === "CombatAidApplication" && ui.windows[window].options.actor.id === actor.id) {
+        app = ui.windows[window];
+        break;
+      }
+    }
+    if (app) {
+      app.render(true, {focus:true})
+    } else {
+      app = new CombatAidApplication(actor);
+      app.render(true)
+    }
   }
 
   get actor() {
@@ -35,14 +46,28 @@ class CombatAidApplication extends Application {
     };
   }
 
+  capitalize(word) {
+    const firstLetter = word.charAt(0);
+    const firstLetterCap = firstLetter.toUpperCase();
+    const remainingLetters = word.slice(1);
+    const capitalizedWord = firstLetterCap + remainingLetters;
+    return capitalizedWord;
+  }
+
+  formatString(string) {
+    const words = string.split('-');
+    const formattedString = words.map(word => word.capitalize()).join(" "); 
+    return formattedString;
+  }
+
   async setActionCounts({ fast, slow } = {}) {
     if (fast !== undefined) {
       await this.actor.setFlag(this.constructor.MODULE_ID, 'fast-actions', Math.max(fast, 0));
-      await game.combat?.getCombatantByActor(this.actor.id).setFlag('forbidden-lands', 'fast', fast === 0);
+      await game.combat?.getCombatantByActor(this.actor.id)?.setFlag('forbidden-lands', 'fast', fast === 0);
     }
     if (slow !== undefined) {
       await this.actor.setFlag(this.constructor.MODULE_ID, 'slow-actions', Math.max(slow, 0));
-      await game.combat?.getCombatantByActor(this.actor.id).setFlag('forbidden-lands', 'slow', slow === 0);
+      await game.combat?.getCombatantByActor(this.actor.id)?.setFlag('forbidden-lands', 'slow', slow === 0);
     }
   }
 
@@ -51,6 +76,7 @@ class CombatAidApplication extends Application {
 
     const overrides = {
       height: 'auto',
+      width: 700,
       classes: [`${this.MODULE_ID}-application`],
       template: `modules/${this.MODULE_ID}/templates/combataid-application.hbs`,
     };
@@ -69,32 +95,36 @@ class CombatAidApplication extends Application {
           slow: this.getActionCounts().slow,
         },
       },
-    };
+    };weaponChoice
   }
 
   async rollAttack(attackInfo) {
-    let rollItem;
+    let weaponChoice;
     if (attackInfo.info.type === 'weapon') {
-      const items = this.actor.items
+      const weapons = this.actor.items
         .filter((item) => {
-          const typeMatch = item.data.type === attackInfo.info.type;
           let categoryMatch = true;
           let featureMatch = true;
-          if (attackInfo.info.requirement?.category) categoryMatch = item.data.data.category === attackInfo.info.requirement.category;
-          if (attackInfo.info.requirement?.features) featureMatch = attackInfo.info.requirement.features.find((feature) => item.data.data.features[feature]);
-          return typeMatch && categoryMatch && featureMatch;
-        })
-        .map((item) => ({ name: item.name, id: item.id }));
-      if (items.length) {
-        if (items.length === 1) {
-          rollItem = items[0].id;
-        } else {
-          rollItem = await this.itemSelection(items);
-        }
 
-        if (rollItem === false || rollItem === null) return false;
-        this.actor.sheet.rollGear(rollItem);
-        return true;
+          const typeMatch = item.type === attackInfo.info.type;
+          if (!typeMatch) return false;
+          
+          if (attackInfo.info.requirement?.category) categoryMatch = item.system.category === attackInfo.info.requirement.category;
+          if (!categoryMatch) return false;
+
+          if (attackInfo.info.requirement?.features) featureMatch = attackInfo.info.requirement.features.find((feature) => item.system.features[feature]);
+          if(!featureMatch) return false;
+
+          return true;
+        })
+        .map((weapon) => ({ name: weapon.name, weapon: weapon.id }));
+      if (weapons.length) {
+        weaponChoice = await this.itemSelection(weapons, "weapon");
+        if(weaponChoice) {
+          this.actor.sheet.rollGear(weaponChoice);
+          return true;
+        }
+        return false;
       }
       ui.notifications.error(
         `You have no weapon that meets the requirements for the action. It must be a ${attackInfo.info.requirement.category} weapon${
@@ -105,17 +135,27 @@ class CombatAidApplication extends Application {
     }
   }
 
-  async itemSelection(choices) {
+  async itemSelection(choices, type) {
     const promptOptions = choices.map((choice) => `<option value=${choice.id}>${choice.name}</option>`).join('');
     const promptChoice = await Dialog.prompt({
-      title: 'Choose Your Weapon',
+      title: `Choose Your ${this.formatString(type)}`,
       content: `
-                        <h1>Weapon Select</h1>
-                        <select class="${this.constructor.MODULE_ID}-weapon-select" name="weapon">${promptOptions}</select>`,
-      label: 'Roll Attack',
+        <h1>Choose Your ${this.formatString(type)}</h1>
+        <select class="${this.constructor.MODULE_ID}-choice-select" name="${type}">${promptOptions}</select>
+        <span class="${this.constructor.MODULE_ID}-item-description">${choices[0].system?.description ?? ""}</span>
+      `,
+      label: `Roll ${this.formatString(type)}`,
       callback: (html) => html.find('select').val(),
+      render: html => {
+        html[0].querySelector(`.${this.constructor.MODULE_ID}-choice-select`).addEventListener('change', (event) =>{
+          const itemDescription = choices.find(choice => choice.id === event.target.value)?.system.description;
+          html[0].querySelector(`.${this.constructor.MODULE_ID}-item-description`).innerText = itemDescription;
+          ui.windows[html[0].closest(".app.window-app.dialog").dataset.appid].setPosition({height: 'auto'});
+        })
+      },
       rejectClose: false,
     });
+    console.log(promptChoice)
 
     return promptChoice;
   }
@@ -126,46 +166,35 @@ class CombatAidApplication extends Application {
   }
 
   async rollAction(action) {
-    if (action === 'parry') {
-      let weapons = this.actor.items.filter((item) => item.type === 'weapon' || (item.type === 'armor' && item.data.data.part === 'shield'));
+    let weapons;
+    let errorMessage;
+    if(action === 'parry') {
+      weapons = this.actor.items.filter((item) => item.type === 'weapon' || (item.type === 'armor' && item.system.part === 'shield'));
       weapons = weapons.map((weapon) => ({ id: weapon.id, name: weapon.name }));
-
-      if (weapons.length) {
-        const weaponChoice = await this.itemSelection(weapons);
-        this.actor.sheet.rollAction(action, weaponChoice);
-        return true;
-      }
-      ui.notifications.error('You do not have a weapon with the hook property or a shield');
-      return false;
+      'You do not have a weapon or a shield'
+    } else if(action === 'shove') {
+      weapons = this.actor.items.filter((item) => (item.type === 'weapon' && item.system.features?.hook === true) || (item.type === 'armor' && item.system.part === 'shield'));
+      weapons = weapons.map((weapon) => ({ id: weapon.id, name: weapon.name }));
+      weapons.unshift({ id: 'unarmed', name: 'Unarmed' });
+      errorMessage = 'You do not have an unarmed attack, a weapon with a hook, or a shield';
+    } else if(action === 'disarm') {
+      weapons = this.actor.items.filter((item) => item.type === 'weapon' && item.system.category === 'melee');
+      weapons = weapons.map((weapon) => ({ id: weapon.id, name: weapon.name }));
+      weapons.unshift({ id: 'unarmed', name: 'Unarmed' });
+      errorMessage = 'You do not have an unarmed attack or melee weapon';
     }
-    if (action === 'shove') {
-      let weapons = this.actor.items.filter((item) => (item.type === 'weapon' && item.data.data.features?.hook === true) || (item.type === 'armor' && item.data.data.part === 'shield'));
-      weapons = weapons.map((weapon) => ({ id: weapon.id, name: weapon.name }));
-      weapons.unshift({ id: 'unarmed', name: 'Unarmed' });
 
-      if (weapons.length > 1) {
-        const weaponChoice = await this.itemSelection(weapons);
-        if (weaponChoice) {
+    if (['parry', 'shove', 'disarm'].includes(action)) {
+      if (weapons.length) {
+        const weaponChoice = await this.itemSelection(weapons, "weapon");
+        if(weaponChoice) {
           this.actor.sheet.rollAction(action, weaponChoice);
           return true;
         }
         return false;
       }
-      this.actor.sheet.rollAction(action);
-    } else if (action === 'disarm') {
-      let weapons = this.actor.items.filter((item) => item.type === 'weapon' && item.data.data.category === 'melee');
-      weapons = weapons.map((weapon) => ({ id: weapon.id, name: weapon.name }));
-      weapons.unshift({ id: 'unarmed', name: 'Unarmed' });
-
-      if (weapons.length > 1) {
-        const weaponChoice = await this.itemSelection(weapons);
-        if (weaponChoice) {
-          this.actor.sheet.rollAction(action, weaponChoice);
-          return true;
-        }
-        return false;
-      }
-      this.actor.sheet.rollAction(action);
+      ui.notifications.error(errorMessage);
+      return false;
     } else {
       this.actor.sheet.rollAction(action);
       return true;
@@ -173,13 +202,30 @@ class CombatAidApplication extends Application {
   }
 
   rollTalent(talentName) {
+    console.log('talentname',talentName)
     const talents = this.actor.items.filter((item) => item.type === 'talent');
-    const specifiedTalent = talents.find((talent) => talent.name === talentName.info.type);
+    const specifiedTalent = talents.find((talent) => talent.name === talentName);
     if (specifiedTalent) {
       specifiedTalent.sendToChat();
       return true;
     }
     ui.notifications.error(`You do not have the ${talentName} talent required for this action.`);
+    return false;
+  }
+
+  async rollSpell(spellType) {
+    const filterValue = spellType === "spell"? "SPELL.SPELL" : "SPELL.POWER_WORD";
+    const availableSpells = this.actor.items.filter(item => item.system.spellType === filterValue);
+
+    if(availableSpells.length) {
+      let rolledSpell = await this.itemSelection(availableSpells, spellType);
+      if(rolledSpell) {
+        this.actor.sheet.rollSpell(rolledSpell);
+        return true;
+      }
+      return false;
+    }
+    ui.notifications.error(`You do not have any spells of type: ${spellType}`);
     return false;
   }
 
@@ -207,7 +253,10 @@ class CombatAidApplication extends Application {
             rolled = this.rollSkill(actionRoll);
             break;
           case 'talent':
-            rolled = this.rollTalent(actionInfo.info.type);
+            rolled = this.rollTalent(actionRoll);
+            break;
+          case 'spell':
+            rolled = await this.rollSpell(actionRoll);
             break;
           default:
             rolled = true;
@@ -234,11 +283,12 @@ class CombatAidApplication extends Application {
       });
     });
 
+
+    // manually increase or decrease action counts
     html[0].querySelectorAll('.modify-actions').forEach(async (element) => {
       element.addEventListener('click', async (event) => {
         const target = event.target.parentElement;
         const actions = this.getActionCounts();
-        console.log(target.classList);
         const type = target.classList.contains('modify-slow-actions') ? 'slow' : 'fast';
         const modification = target.classList.contains('decrease-actions') ? 'decrease' : 'increase';
         if (modification === 'increase') actions[type] = Math.max(actions[type] + 1, 0);
@@ -256,9 +306,10 @@ class CombatAidApplication extends Application {
       });
     });
 
+
+
     html[0].querySelectorAll('.header.action-expand').forEach((element) => {
       element.addEventListener('click', (event) => {
-        console.log(event);
         let target = event.target.parentElement.parentElement;
         if (event.target.nodeName === 'I') target = target.parentElement; // go from i > div.action-expand > .headers-container > div.outer-actions-container
 
