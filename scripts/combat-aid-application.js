@@ -1,12 +1,11 @@
 import combatActions from './combat-actions.js';
 
 class CombatAidApplication extends Application {
-  constructor(actor,tokenId) {
+  constructor(actor) {
     super({
       id: `${CombatAidApplication.MODULE_ID}-${actor.id}`,
       title: `${actor.name} Combat Aid`,
       actor,
-      tokenId
     });
   }
 
@@ -95,7 +94,7 @@ class CombatAidApplication extends Application {
           slow: this.getActionCounts().slow,
         },
       },
-    };weaponChoice
+    };
   }
 
   async rollAttack(attackInfo) {
@@ -230,8 +229,6 @@ class CombatAidApplication extends Application {
   }
 
   activateListeners(html) {
-    const { actor } = this;
-
     html[0].querySelectorAll('.actions-table:not(.action-disabled) .action span').forEach(async (element) => {
       element.addEventListener('click', async (event) => {
         const target = event.target;
@@ -272,7 +269,7 @@ class CombatAidApplication extends Application {
 
           await this.updateData(updateData);
           ChatMessage.create({
-            speaker: ChatMessage.getSpeaker({ actor: actor.id }),
+            speaker: ChatMessage.getSpeaker({ actor: this.actor.id }),
             content: `${actor.name} takes the ${actionName} action for their ${actionSpeed} action.
                     <br><br>
                     Actions Remaining: <br>
@@ -296,7 +293,7 @@ class CombatAidApplication extends Application {
 
         await this.updateData(actions);
         ChatMessage.create({
-          speaker: ChatMessage.getSpeaker({ actor: actor.id }),
+          speaker: ChatMessage.getSpeaker({ actor: this.actor.id }),
           content: `${actor.name} ${modification}d their ${type} action count.
                 <br><br>
                 Updated Action Count: <br>
