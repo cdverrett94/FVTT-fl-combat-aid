@@ -268,7 +268,7 @@ class CombatAidApplication extends Application {
           await this.updateData(updateData);
           ChatMessage.create({
             speaker: ChatMessage.getSpeaker({ actor: this.actor.id }),
-            content: `${actor.name} takes the ${actionName} action for their ${actionSpeed} action.
+            content: `${this.actor.name} takes the ${actionName} action for their ${actionSpeed} action.
                     <br><br>
                     Actions Remaining: <br>
                     Fast: ${this.getActionCounts().fast}<br>
@@ -292,7 +292,7 @@ class CombatAidApplication extends Application {
         await this.updateData(actions);
         ChatMessage.create({
           speaker: ChatMessage.getSpeaker({ actor: this.actor.id }),
-          content: `${actor.name} ${modification}d their ${type} action count.
+          content: `${this.actor.name} ${modification}d their ${type} action count.
                 <br><br>
                 Updated Action Count: <br>
                 Fast: ${this.getActionCounts().fast}<br>
