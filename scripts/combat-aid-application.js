@@ -116,7 +116,7 @@ class CombatAidApplication extends Application {
 
           return true;
         })
-        .map((weapon) => ({ name: weapon.name, weapon: weapon.id }));
+        .map((weapon) => ({ name: weapon.name, id: weapon.id }));
       if (weapons.length) {
         weaponChoice = await this.itemSelection(weapons, "weapon");
         if(weaponChoice) {
@@ -148,13 +148,12 @@ class CombatAidApplication extends Application {
       render: html => {
         html[0].querySelector(`.${this.constructor.MODULE_ID}-choice-select`).addEventListener('change', (event) =>{
           const itemDescription = choices.find(choice => choice.id === event.target.value)?.system.description;
-          html[0].querySelector(`.${this.constructor.MODULE_ID}-item-description`).innerText = itemDescription;
+          html[0].querySelector(`.${this.constructor.MODULE_ID}-item-description`).innerText = itemDescription ?? "";
           ui.windows[html[0].closest(".app.window-app.dialog").dataset.appid].setPosition({height: 'auto'});
         })
       },
       rejectClose: false,
     });
-    console.log(promptChoice)
 
     return promptChoice;
   }
@@ -201,7 +200,6 @@ class CombatAidApplication extends Application {
   }
 
   rollTalent(talentName) {
-    console.log('talentname',talentName)
     const talents = this.actor.items.filter((item) => item.type === 'talent');
     const specifiedTalent = talents.find((talent) => talent.name === talentName);
     if (specifiedTalent) {
